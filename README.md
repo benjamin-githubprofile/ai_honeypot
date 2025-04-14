@@ -42,7 +42,16 @@ A sophisticated honeypot system designed to detect, analyze, and study various t
 - Risk scoring system
 - IP-based rate limiting
 
-### 7. Analysis Dashboard
+### 7. API Security Protection
+- API key management system
+- Rate limiting and throttling
+- Honeypot/decoy endpoints
+- ML-based threat detection
+- API request logging and monitoring
+- API version management
+- JWT authentication security
+
+### 8. Analysis Dashboard
 - Real-time attack visualization
 - Historical attack data analysis
 - Geographic attack distribution
@@ -117,6 +126,7 @@ Configuration can be modified through the UI in the respective tabs.
 ├── sql_inject/            # SQL injection modules
 ├── xss/                   # XSS attack modules
 ├── ddos/                  # DDoS attack modules
+├── api_security/          # API security protection modules
 ├── utils/                 # Utility functions
 ├── logs/                  # Log files
 └── config/                # Configuration files

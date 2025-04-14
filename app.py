@@ -35,6 +35,7 @@ from xss.xss_attack import simulate_xss_attack, get_common_xss_patterns
 from xss.detector import detect_xss, get_xss_detector
 from xss.logger import log_xss_attempt
 from xss.utils import render_web_context, simulate_web_impact, sanitize_html
+from api_security.admin_dashboard import render_api_admin
 
 def plotly_chart_with_clicks(fig, use_container_width=True):
     div_id = f"plotly-chart-{id(fig)}"
@@ -97,8 +98,8 @@ def format_prediction(prediction):
     else:
         return "No prediction available"
 
-attack_tab, credential_tab, scraping_tab, ddos_tab, sql_tab, xss_tab, analysis_tab = st.tabs(
-    ["Text Attack", "Credential Stuffing", "Web Scraping", "DDoS Attack", "SQL Injection", "XSS Attack", "Analysis"]
+attack_tab, credential_tab, scraping_tab, ddos_tab, sql_tab, xss_tab, api_tab, analysis_tab = st.tabs(
+    ["Text Attack", "Credential Stuffing", "Web Scraping", "DDoS Attack", "SQL Injection", "XSS Attack", "API Security", "Analysis"]
 )
 
 with attack_tab:
@@ -1388,6 +1389,12 @@ document.getElementById('output').innerHTML = paramValue;
                     st.warning("This input could manipulate the page's DOM if inserted into a vulnerable page.")
                 else:
                     st.info("This input doesn't appear to target DOM manipulation specifically, but could still be dangerous in other contexts.")
+
+with api_tab:
+    st.title("API Security Analysis")
+    st.write("Analyze API security issues and potential vulnerabilities.")
+    
+    render_api_admin()
 
 with analysis_tab:
     st.title("Attack Analysis")
