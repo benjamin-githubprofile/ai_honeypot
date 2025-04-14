@@ -1,0 +1,24 @@
+# Create .gitignore file
+cat > .gitignore << 'EOL'
+# Virtual Environment
+venv/
+__pycache__/
+*.pyc
+
+# Large data files
+*.csv
+*.h5
+*.pkl
+*.model
+style_transfer_model/
+style_transfer_model_light/
+
+# Logs and caches
+logs/
+*_log.txt
+ip_cache/
+credential_data/
+
+# OS files
+.DS_Store
+EOL

@@ -1,0 +1,44 @@
+{
+  "throttling": {
+    "enabled": true,
+    "suspicion_thresholds": {
+      "1": {
+        "rate": 0.9,
+        "duration": 30
+      },
+      "2": {
+        "rate": 0.7,
+        "duration": 60
+      },
+      "3": {
+        "rate": 0.5,
+        "duration": 300
+      },
+      "4": {
+        "rate": 0.3,
+        "duration": 600
+      },
+      "5": {
+        "rate": 0.1,
+        "duration": 1800
+      }
+    }
+  },
+  "captcha": {
+    "enabled": true,
+    "suspicion_threshold": 3,
+    "challenge_duration": 300,
+    "cooldown": 1800
+  },
+  "blocking": {
+    "enabled": true,
+    "auto_block_threshold": 4,
+    "max_failed_captchas": 3,
+    "block_durations": {
+      "suspicion_4": 900,
+      "suspicion_5": 3600,
+      "failed_captcha": 1800,
+      "repeat_offender": 86400
+    }
+  }
+}
