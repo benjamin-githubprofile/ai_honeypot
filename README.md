@@ -118,7 +118,12 @@ Key capabilities include:
    pip install -r requirement.txt
    ```
 
-4. Verify installation:
+4. Download the dataset:
+   The sentiment analysis model requires a dataset that is not included in the repository due to its size.
+   Download the dataset from Kaggle: [Yelp Review Dataset](https://www.kaggle.com/datasets/ilhamfp31/yelp-review-dataset)
+   Place the downloaded `sentiment.csv` file in the root directory of the project.
+
+5. Verify installation:
    ```bash
    python -c "import streamlit, pandas, torch, transformers; print('Installation successful!')"
    ```
