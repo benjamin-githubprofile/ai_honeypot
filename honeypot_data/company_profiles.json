@@ -1,0 +1,83 @@
+[
+  {
+    "name": "TechCore Innovations",
+    "domain": "techcoreinnovations.com",
+    "industry": "Technology",
+    "employees": [
+      {
+        "name": "Alex Johnson",
+        "title": "CEO",
+        "email": "alex.johnson@techcoreinnovations.com"
+      },
+      {
+        "name": "Sarah Chen",
+        "title": "CTO",
+        "email": "sarah.chen@techcoreinnovations.com"
+      },
+      {
+        "name": "David Miller",
+        "title": "CFO",
+        "email": "david.miller@techcoreinnovations.com"
+      },
+      {
+        "name": "Emma Williams",
+        "title": "HR Director",
+        "email": "emma.williams@techcoreinnovations.com"
+      }
+    ]
+  },
+  {
+    "name": "Global Finance Partners",
+    "domain": "globalfinancepartners.com",
+    "industry": "Finance",
+    "employees": [
+      {
+        "name": "Michael Roberts",
+        "title": "President",
+        "email": "m.roberts@globalfinancepartners.com"
+      },
+      {
+        "name": "Jessica Lee",
+        "title": "VP Finance",
+        "email": "j.lee@globalfinancepartners.com"
+      },
+      {
+        "name": "Robert Taylor",
+        "title": "Investment Director",
+        "email": "r.taylor@globalfinancepartners.com"
+      },
+      {
+        "name": "Sophia Garcia",
+        "title": "Senior Analyst",
+        "email": "s.garcia@globalfinancepartners.com"
+      }
+    ]
+  },
+  {
+    "name": "HealthPlus Medical",
+    "domain": "healthplusmedical.com",
+    "industry": "Healthcare",
+    "employees": [
+      {
+        "name": "Dr. James Wilson",
+        "title": "Medical Director",
+        "email": "jwilson@healthplusmedical.com"
+      },
+      {
+        "name": "Emily Brown",
+        "title": "Head of Operations",
+        "email": "ebrown@healthplusmedical.com"
+      },
+      {
+        "name": "Daniel Kim",
+        "title": "IT Administrator",
+        "email": "dkim@healthplusmedical.com"
+      },
+      {
+        "name": "Lisa Martinez",
+        "title": "Patient Coordinator",
+        "email": "lmartinez@healthplusmedical.com"
+      }
+    ]
+  }
+]

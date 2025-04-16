@@ -1,0 +1,11 @@
+{
+  "trap_id": "762e4cd1-b7ec-4a7c-b3ad-bbcdd1ffec12",
+  "ip_address": "222.68.105.142",
+  "timestamp": "2025-04-16T14:40:53.997641",
+  "type": "credential_submission",
+  "data": {
+    "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36",
+    "referrer": "https://outlook.office.com/",
+    "credential_type": "login"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "trap_id": "95d7a11b-a96c-46ad-8180-77e0ca304b2c",
+  "ip_address": "53.200.170.59",
+  "timestamp": "2025-04-16T14:37:27.932146",
+  "type": "email_view",
+  "data": {
+    "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36",
+    "referrer": "https://mail.yahoo.com/"
+  }
+}

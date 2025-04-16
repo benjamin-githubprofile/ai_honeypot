@@ -1,0 +1,11 @@
+{
+  "trap_id": "07675cfd-04d7-4602-a378-2e401fe6e13f",
+  "ip_address": "98.63.253.47",
+  "timestamp": "2025-04-16T14:33:30.892499",
+  "type": "credential_submission",
+  "data": {
+    "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36",
+    "referrer": "https://mail.google.com/",
+    "credential_type": "login"
+  }
+}

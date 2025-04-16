@@ -1,0 +1,11 @@
+{
+  "trap_id": "2beaf50e-3280-4d26-904f-fdde71fcb808",
+  "ip_address": "19.216.29.161",
+  "timestamp": "2025-04-16T14:40:54.520348",
+  "type": "credential_submission",
+  "data": {
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15",
+    "referrer": "https://mail.yahoo.com/",
+    "credential_type": "banking"
+  }
+}

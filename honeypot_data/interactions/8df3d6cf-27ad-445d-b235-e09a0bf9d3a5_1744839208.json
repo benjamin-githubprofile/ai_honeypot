@@ -1,0 +1,10 @@
+{
+  "trap_id": "8df3d6cf-27ad-445d-b235-e09a0bf9d3a5",
+  "ip_address": "181.221.133.156",
+  "timestamp": "2025-04-16T14:33:28.917222",
+  "type": "malware_download",
+  "data": {
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+    "referrer": "https://mail.yahoo.com/"
+  }
+}

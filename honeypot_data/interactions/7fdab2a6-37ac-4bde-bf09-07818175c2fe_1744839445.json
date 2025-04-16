@@ -1,0 +1,10 @@
+{
+  "trap_id": "7fdab2a6-37ac-4bde-bf09-07818175c2fe",
+  "ip_address": "69.62.141.52",
+  "timestamp": "2025-04-16T14:37:25.935292",
+  "type": "link_click",
+  "data": {
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15",
+    "referrer": "https://outlook.office.com/"
+  }
+}

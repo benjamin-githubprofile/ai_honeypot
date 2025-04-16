@@ -1,0 +1,84 @@
+[
+  {
+    "from": "lmartinez@healthplusmedical.com",
+    "to": "ebrown@healthplusmedical.com",
+    "subject": "Security Alert: New login to your HealthPlus Medical Connect account",
+    "body": "\n            Security Alert from HealthPlus Medical Connect\n            \n            We detected a new login to your account from:\n            \n            Device: Mac\n            Location: San Francisco, CA\n            Time: 2025-04-16 14:40\n            \n            If this wasn't you, your account may be compromised.\n            Secure your account immediately: https://connect.healthplusmedical.com/security?token=19bda1df-4b0e-46cf-a6f4-add818caca02\n            \n            The HealthPlus Medical Connect Security Team\n            ",
+    "company": "HealthPlus Medical",
+    "trap_id": "762e4cd1-b7ec-4a7c-b3ad-bbcdd1ffec12",
+    "created_at": "2025-04-16T14:40:51.038914",
+    "scenario_type": "Social Media Alert",
+    "scenario_data": {
+      "social_platform": "HealthPlus Medical Connect",
+      "device_type": "Mac",
+      "login_location": "San Francisco, CA",
+      "login_time": "2025-04-16 14:40",
+      "verification_link": "https://connect.healthplusmedical.com/security?token=19bda1df-4b0e-46cf-a6f4-add818caca02"
+    }
+  },
+  {
+    "from": "lmartinez@healthplusmedical.com",
+    "to": "ebrown@healthplusmedical.com",
+    "subject": "URGENT: Security Alert for Your HealthPlus Medical Financial Account",
+    "body": "\n            Dear Valued HealthPlus Medical Financial Customer,\n            \n            We have detected unusual activity on your HealthPlus Medical Financial account. For your security, we have temporarily limited access to sensitive account features.\n            \n            Please verify your identity by following this secure link:\n            https://banking.healthplusmedical.com/verify?session=f0f0f5a8-c561-4ffb-8d8c-ca6b0d7f9896\n            \n            If you do not complete this verification within 24 hours, your account may be suspended.\n            \n            Regards,\n            HealthPlus Medical Financial Security Team\n            ",
+    "company": "HealthPlus Medical",
+    "trap_id": "2beaf50e-3280-4d26-904f-fdde71fcb808",
+    "created_at": "2025-04-16T14:40:51.038961",
+    "scenario_type": "Bank Security Alert",
+    "scenario_data": {
+      "bank_domain": "secure.healthplusmedical.com",
+      "bank_name": "HealthPlus Medical Financial",
+      "verification_link": "https://banking.healthplusmedical.com/verify?session=f0f0f5a8-c561-4ffb-8d8c-ca6b0d7f9896"
+    }
+  },
+  {
+    "from": "emma.williams@techcoreinnovations.com",
+    "to": "alex.johnson@techcoreinnovations.com",
+    "subject": "Security Alert: New login to your TechCore Innovations Connect account",
+    "body": "\n            Security Alert from TechCore Innovations Connect\n            \n            We detected a new login to your account from:\n            \n            Device: Android\n            Location: London, UK\n            Time: 2025-04-16 14:40\n            \n            If this wasn't you, your account may be compromised.\n            Secure your account immediately: https://connect.techcoreinnovations.com/security?token=8d2f3c2c-235b-4a9f-9d94-048953563672\n            \n            The TechCore Innovations Connect Security Team\n            ",
+    "company": "TechCore Innovations",
+    "trap_id": "1fabd57e-d7ca-4645-a1be-08d64ad29eae",
+    "created_at": "2025-04-16T14:40:51.038991",
+    "scenario_type": "Social Media Alert",
+    "scenario_data": {
+      "social_platform": "TechCore Innovations Connect",
+      "device_type": "Android",
+      "login_location": "London, UK",
+      "login_time": "2025-04-16 14:40",
+      "verification_link": "https://connect.techcoreinnovations.com/security?token=8d2f3c2c-235b-4a9f-9d94-048953563672"
+    }
+  },
+  {
+    "from": "m.roberts@globalfinancepartners.com",
+    "to": "r.taylor@globalfinancepartners.com",
+    "subject": "URGENT: Security Alert for Your Global Finance Partners Financial Account",
+    "body": "\n            Dear Valued Global Finance Partners Financial Customer,\n            \n            We have detected unusual activity on your Global Finance Partners Financial account. For your security, we have temporarily limited access to sensitive account features.\n            \n            Please verify your identity by following this secure link:\n            https://banking.globalfinancepartners.com/verify?session=c3bb5969-990b-4204-a610-1eed94b0705e\n            \n            If you do not complete this verification within 24 hours, your account may be suspended.\n            \n            Regards,\n            Global Finance Partners Financial Security Team\n            ",
+    "company": "Global Finance Partners",
+    "trap_id": "2c835bf2-d26f-4da2-8807-18cf4ad0fb17",
+    "created_at": "2025-04-16T14:40:51.039016",
+    "scenario_type": "Bank Security Alert",
+    "scenario_data": {
+      "bank_domain": "secure.globalfinancepartners.com",
+      "bank_name": "Global Finance Partners Financial",
+      "verification_link": "https://banking.globalfinancepartners.com/verify?session=c3bb5969-990b-4204-a610-1eed94b0705e"
+    }
+  },
+  {
+    "from": "dkim@healthplusmedical.com",
+    "to": "ebrown@healthplusmedical.com",
+    "subject": "Your package #TRK33375 requires attention",
+    "body": "\n            Delivery Notification\n            \n            Your package #TRK33375 is pending delivery.\n            \n            Due to address verification required, we need additional information to deliver your package.\n            Please provide the required information by clicking here: https://delivery.healthplusmedical.com/track?id=d1f8921c-a7c8-4b6c-8425-2ce9ebe058ac\n            \n            Delivery Details:\n            - Tracking Number: TRK33375\n            - Expected Delivery: 2025-04-16\n            - Address: 123 Main St...\n            \n            Thank you,\n            HealthPlus Medical Shipping Delivery Team\n            ",
+    "company": "HealthPlus Medical",
+    "trap_id": "6bf2b84a-8afc-4990-b8af-442d289510ec",
+    "created_at": "2025-04-16T14:40:51.039074",
+    "scenario_type": "Package Delivery Notification",
+    "scenario_data": {
+      "delivery_company": "HealthPlus Medical Shipping",
+      "tracking_number": "TRK33375",
+      "issue_reason": "address verification required",
+      "verification_link": "https://delivery.healthplusmedical.com/track?id=d1f8921c-a7c8-4b6c-8425-2ce9ebe058ac",
+      "delivery_date": "2025-04-16",
+      "partial_address": "123 Main St..."
+    }
+  }
+]

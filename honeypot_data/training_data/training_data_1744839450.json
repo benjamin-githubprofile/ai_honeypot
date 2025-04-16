@@ -1,0 +1,68 @@
+[
+  {
+    "ip": "171.182.182.31",
+    "interaction_count": 9,
+    "unique_traps": 1,
+    "link_clicks": 6,
+    "email_views": 3,
+    "credential_submissions": 0,
+    "file_downloads": 0,
+    "malware_downloads": 0,
+    "threat_level": 1
+  },
+  {
+    "ip": "95.119.11.10",
+    "interaction_count": 6,
+    "unique_traps": 1,
+    "link_clicks": 1,
+    "email_views": 5,
+    "credential_submissions": 0,
+    "file_downloads": 0,
+    "malware_downloads": 0,
+    "threat_level": 1
+  },
+  {
+    "ip": "49.25.151.13",
+    "interaction_count": 10,
+    "unique_traps": 1,
+    "link_clicks": 3,
+    "email_views": 1,
+    "credential_submissions": 0,
+    "file_downloads": 2,
+    "malware_downloads": 4,
+    "threat_level": 3
+  },
+  {
+    "ip": "69.62.141.52",
+    "interaction_count": 6,
+    "unique_traps": 1,
+    "link_clicks": 5,
+    "email_views": 1,
+    "credential_submissions": 0,
+    "file_downloads": 0,
+    "malware_downloads": 0,
+    "threat_level": 1
+  },
+  {
+    "ip": "74.77.79.75",
+    "interaction_count": 10,
+    "unique_traps": 1,
+    "link_clicks": 6,
+    "email_views": 4,
+    "credential_submissions": 0,
+    "file_downloads": 0,
+    "malware_downloads": 0,
+    "threat_level": 1
+  },
+  {
+    "ip": "53.200.170.59",
+    "interaction_count": 6,
+    "unique_traps": 1,
+    "link_clicks": 2,
+    "email_views": 4,
+    "credential_submissions": 0,
+    "file_downloads": 0,
+    "malware_downloads": 0,
+    "threat_level": 1
+  }
+]
