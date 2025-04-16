@@ -1,4 +1,6 @@
 import streamlit as st
+print("🔥 app.py is running")
+st.write("👋 Hello from AI Honeypot!")
 from models.text_classifier import load_classifier
 from text_attack.text_attack import generate_adversarial
 from models.style_transfer import load_style_transfer_model, apply_style_transfer
