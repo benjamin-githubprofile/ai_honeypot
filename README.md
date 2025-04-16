@@ -75,7 +75,19 @@ Key capabilities include:
 - Web context rendering for demonstration
 - Comprehensive XSS pattern library
 
-### 7. API Security Protection
+### 7. Phishing Attack Detection
+- Email phishing simulation with realistic templates
+- Machine learning-based phishing content analysis
+- URL analysis for phishing indicators and risk scoring
+- Domain spoofing and typosquatting detection
+- Interactive phishing awareness training module
+- Phishing type classification (banking, credential, delivery, etc.)
+- Multi-factor risk assessment with visual indicators
+- Educational resources on how to identify phishing attempts
+- Interactive phishing detection quiz with scoring
+- Comprehensive phishing attempt logging and analytics
+
+### 8. API Security Protection
 - Advanced API key management system
 - Intelligent rate limiting and throttling
 - Strategic honeypot/decoy endpoints
@@ -83,7 +95,7 @@ Key capabilities include:
 - Administrative dashboard for monitoring
 - REST API integration with security controls
 
-### 8. Analysis Dashboard
+### 9. Analysis Dashboard
 - Real-time attack visualization with interactive charts
 - Historical attack data analysis with filtering
 - Geographic attack distribution mapping
@@ -160,6 +172,7 @@ The system can be configured through the web interface, but you can also modify 
    - **DDoS Attack**: Simulate and visualize DDoS attack patterns
    - **SQL Injection**: Test SQL injection detection capabilities
    - **XSS Attack**: Experiment with cross-site scripting detection
+   - **Phishing Attack**: Analyze and detect email phishing attempts
    - **API Security**: Explore API security mechanisms
    - **Analysis**: View aggregated data across all attack types
 
@@ -187,6 +200,12 @@ The system can be configured through the web interface, but you can also modify 
 ├── sql_inject/             # SQL injection modules
 ├── xss/                    # XSS attack modules
 ├── ddos/                   # DDoS attack modules
+├── phishing/               # Phishing attack detection
+│   ├── email_simulation.py # Email phishing simulation
+│   ├── detector.py         # ML-based phishing detection
+│   ├── url_analyzer.py     # URL analysis for phishing 
+│   ├── logger.py           # Phishing attempt logging
+│   └── utils.py            # Email rendering and analysis utilities
 ├── api_security/           # API security protection modules
 │   ├── rest_api.py         # REST API implementation
 │   ├── ml_detector.py      # ML-based API attack detection
