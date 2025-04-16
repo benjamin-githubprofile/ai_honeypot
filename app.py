@@ -1,6 +1,6 @@
 import streamlit as st
 from models.text_classifier import load_classifier
-from attacks.text_attack import generate_adversarial
+from text_attack.text_attack import generate_adversarial
 from models.style_transfer import load_style_transfer_model, apply_style_transfer
 from utils.logger import log_attack
 import pandas as pd
@@ -41,6 +41,10 @@ from xss.detector import detect_xss, get_xss_detector
 from xss.logger import log_xss_attempt
 from xss.utils import render_web_context, simulate_web_impact, sanitize_html
 from api_security.admin_dashboard import render_api_admin
+from phishing.ai_honeypot import (
+    get_ai_honeypot, generate_honeypot_scenarios, record_honeypot_interaction,
+    simulate_attacker_interactions, train_honeypot_ai, analyze_honeypot_data
+)
 
 def plotly_chart_with_clicks(fig, use_container_width=True):
     div_id = f"plotly-chart-{id(fig)}"
@@ -159,7 +163,7 @@ with credential_tab:
         
         if submit_button:
             if username and password:
-                from attacks.credential_attack import analyze_login_attempt
+                from text_attack.credential_attack import analyze_login_attempt
                 from utils.credential_logger import log_credential_attack
                 
                 analysis = analyze_login_attempt(username, password)
@@ -185,7 +189,7 @@ with credential_tab:
     
     with col1:
         if st.button("Update ML Model"):
-            from attacks.credential_attack import update_credential_model
+            from text_attack.credential_attack import update_credential_model
             success, message = update_credential_model()
             if success:
                 st.success(message)
@@ -194,7 +198,7 @@ with credential_tab:
     
     with col2:
         if st.button("Show Statistics"):
-            from attacks.credential_attack import get_credential_statistics
+            from text_attack.credential_attack import get_credential_statistics
             stats = get_credential_statistics()
             st.write("### Credential Attack Statistics")
             st.metric("Total Attempts", stats["total_attempts"])
@@ -1959,7 +1963,7 @@ with phishing_tab:
     st.title("Phishing Attack Simulation")
     st.write("This tab simulates and detects phishing attacks in emails.")
     
-    phishing_sim_tab, url_analysis_tab, training_tab = st.tabs(["Email Simulation", "URL Analysis", "Training"])
+    phishing_sim_tab, url_analysis_tab, honeypot_tab, training_tab = st.tabs(["Email Simulation", "URL Analysis", "AI Honeypot", "Training"])
     
     with phishing_sim_tab:
         st.subheader("Email Phishing Detection")
@@ -2100,6 +2104,145 @@ with phishing_tab:
             - Look-alike domain detection
             - Malicious pattern recognition
             """)
+    
+    with honeypot_tab:
+        st.subheader("AI Honeypot Email Simulation")
+        st.write("Create fake company email scenarios to lure and analyze attackers")
+        
+        col1, col2 = st.columns([2, 1])
+        
+        with col1:
+            if st.button("Generate Honeypot Email Scenarios", use_container_width=True):
+                with st.spinner("Generating fake company email scenarios..."):
+                    scenarios = generate_honeypot_scenarios(5)
+                    st.session_state.honeypot_scenarios = scenarios
+                st.success(f"Generated {len(scenarios)} honeypot email scenarios")
+            
+            if "honeypot_scenarios" in st.session_state and st.session_state.honeypot_scenarios:
+                st.write("### Honeypot Email Scenarios")
+                
+                for i, scenario in enumerate(st.session_state.honeypot_scenarios):
+                    with st.expander(f"Scenario {i+1}: {scenario['subject']}", expanded=i==0):
+                        st.write(f"**Company:** {scenario['company']}")
+                        st.write(f"**From:** {scenario['from']}")
+                        st.write(f"**To:** {scenario['to']}")
+                        st.write(f"**Subject:** {scenario['subject']}")
+                        st.write("**Body:**")
+                        st.text_area(f"Email body {i}", scenario['body'], height=150, disabled=True)
+                        st.write(f"**Scenario Type:** {scenario['scenario_type']}")
+                        st.write(f"**Trap ID:** {scenario['trap_id']}")
+        
+        with col2:
+            st.write("### Honeypot Controls")
+            
+            if st.button("Simulate Attacker Interactions", use_container_width=True):
+                with st.spinner("Simulating attacker interactions..."):
+                    interactions = simulate_attacker_interactions(3, 10)
+                st.success(f"Simulated {len(interactions)} attacker interactions")
+            
+            if st.button("Train AI Model", use_container_width=True):
+                with st.spinner("Training AI model..."):
+                    result = train_honeypot_ai()
+                if result["status"] == "success":
+                    st.success(f"AI model trained: {result['message']}")
+                else:
+                    st.error(f"Training failed: {result['message']}")
+            
+            if st.button("Analyze Honeypot Effectiveness", use_container_width=True):
+                with st.spinner("Analyzing honeypot effectiveness..."):
+                    analysis = analyze_honeypot_data()
+                st.session_state.honeypot_analysis = analysis
+        
+        if "honeypot_analysis" in st.session_state and st.session_state.honeypot_analysis:
+            analysis = st.session_state.honeypot_analysis
+            
+            if analysis["status"] == "success":
+                st.markdown("---")
+                st.subheader("Honeypot Analysis Results")
+                
+                effectiveness = analysis["effectiveness_score"] * 100
+                
+                col1, col2, col3 = st.columns(3)
+                with col1:
+                    st.metric("Effectiveness Score", f"{effectiveness:.1f}%")
+                with col2:
+                    st.metric("Total Interactions", analysis["total_interactions"])
+                with col3:
+                    st.metric("Unique Attackers", analysis["unique_attackers"])
+                
+                st.write("### Interaction Types")
+                interaction_df = pd.DataFrame({
+                    "Interaction Type": list(analysis["interaction_types"].keys()),
+                    "Count": list(analysis["interaction_types"].values())
+                })
+                
+                fig = px.pie(
+                    interaction_df,
+                    values="Count",
+                    names="Interaction Type",
+                    title="Distribution of Attacker Interactions",
+                    color_discrete_sequence=px.colors.qualitative.Pastel
+                )
+                st.plotly_chart(fig, use_container_width=True)
+                
+                st.write("### Trap Effectiveness")
+                trap_data = []
+                for trap_type, data in analysis["trap_effectiveness"].items():
+                    trap_data.append({
+                        "Trap Type": trap_type,
+                        "Total": data["count"],
+                        "Interactions": data["interactions"],
+                        "Effectiveness": data["effectiveness"] * 100
+                    })
+                
+                if trap_data:
+                    trap_df = pd.DataFrame(trap_data)
+                    fig = px.bar(
+                        trap_df,
+                        x="Trap Type",
+                        y="Effectiveness",
+                        title="Effectiveness by Trap Type (%)",
+                        color="Effectiveness",
+                        text_auto='.1f'
+                    )
+                    fig.update_traces(texttemplate='%{text}%', textposition='outside')
+                    fig.update_layout(uniformtext_minsize=8, uniformtext_mode='hide')
+                    st.plotly_chart(fig, use_container_width=True)
+            else:
+                st.warning(f"Analysis: {analysis['message']}")
+        
+        st.subheader("Attacker Profiles")
+        if st.button("View Attacker Profiles"):
+            honeypot = get_ai_honeypot()
+            attacker_profiles = honeypot.get_attacker_profiles()
+            
+            if attacker_profiles:
+                st.write(f"### {len(attacker_profiles)} Attacker Profiles")
+                for profile in attacker_profiles:
+                    threat_color = {
+                        "critical": "🔴", 
+                        "high": "🟠", 
+                        "medium": "🟡", 
+                        "low": "🔵",
+                        "unknown": "⚪"
+                    }.get(profile["threat_level"], "⚪")
+                    
+                    with st.expander(f"{threat_color} IP: {profile['ip']} ({profile['threat_level'].title()} Threat)"):
+                        st.write(f"**Interactions:** {profile['interactions']}")
+                        st.write(f"**First Seen:** {profile['first_seen']}")
+                        st.write(f"**Last Seen:** {profile['last_seen']}")
+                        
+                        if "interaction_types" in profile:
+                            st.write("**Interaction Types:**")
+                            for itype, count in profile["interaction_types"].items():
+                                st.write(f"- {itype}: {count}")
+                        
+                        if "patterns" in profile and profile["patterns"]:
+                            st.write("**Behavior Patterns:**")
+                            for pattern in profile["patterns"]:
+                                st.write(f"- {pattern.replace('_', ' ').title()}")
+            else:
+                st.info("No attacker profiles available yet. Generate scenarios and simulate interactions first.")
     
     with training_tab:
         st.subheader("Training & Awareness")
