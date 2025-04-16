@@ -17,6 +17,11 @@ import uuid
 from web_scraping.honeypots import get_dummy_financial_data, get_dummy_customer_data, get_dummy_api_keys
 from web_scraping.logger import log_scraping_attempt
 from web_scraping.utils import evaluate_scraper_effectiveness, display_attack_results
+from phishing.email_simulation import get_sample_emails, get_email_templates
+from phishing.detector import detect_phishing, get_phishing_detector
+from phishing.logger import log_phishing_attempt
+from phishing.url_analyzer import analyze_url
+from phishing.utils import render_email, extract_urls_from_email
 
 from ddos import (
     RateLimiter, 
@@ -98,8 +103,8 @@ def format_prediction(prediction):
     else:
         return "No prediction available"
 
-attack_tab, credential_tab, scraping_tab, ddos_tab, sql_tab, xss_tab, api_tab, analysis_tab = st.tabs(
-    ["Text Attack", "Credential Stuffing", "Web Scraping", "DDoS Attack", "SQL Injection", "XSS Attack", "API Security", "Analysis"]
+attack_tab, credential_tab, scraping_tab, ddos_tab, sql_tab, xss_tab, phishing_tab, api_tab, analysis_tab = st.tabs(
+    ["Text Attack", "Credential Stuffing", "Web Scraping", "DDoS Attack", "SQL Injection", "XSS Attack", "Phishing Attack", "API Security", "Analysis"]
 )
 
 with attack_tab:
@@ -1403,7 +1408,7 @@ with analysis_tab:
     log_type = st.selectbox(
         "Select Analysis Type",
         ["Select an option...", "Text Attack Logs", "Credential Stuffing Logs", "Web Scraping Logs", 
-         "DDoS Attack Logs", "SQL Injection Logs", "XSS Attack Logs"]
+         "DDoS Attack Logs", "SQL Injection Logs", "XSS Attack Logs", "Phishing Attack Logs"]
     )
     
     if log_type == "Text Attack Logs":
@@ -1870,5 +1875,357 @@ with analysis_tab:
                 st.info("No XSS attack log data available yet.")
         except FileNotFoundError:
             st.info("XSS log file not found. Perform some XSS attack attempts to generate data.")
+    elif log_type == "Phishing Attack Logs":
+        st.subheader("Phishing Attack Analysis")
+        st.write("Analyze logged phishing attack detection data.")
+        
+        try:
+            from phishing.logger import get_phishing_logs
+            phishing_logs = get_phishing_logs(days=30, limit=1000)
+            
+            if phishing_logs:
+                df = pd.DataFrame(phishing_logs)
+                st.write("### Phishing Attack Logs")
+                st.dataframe(df)
+                
+                if "is_phishing" in df.columns:
+                    col1, col2 = st.columns(2)
+                    
+                    with col1:
+                        phishing_counts = df["is_phishing"].value_counts().reset_index()
+                        phishing_counts.columns = ["Is Phishing", "Count"]
+                        
+                        fig = px.pie(
+                            phishing_counts,
+                            values="Count",
+                            names="Is Phishing",
+                            title="Phishing vs Legitimate Emails",
+                            color_discrete_sequence=px.colors.qualitative.Pastel
+                        )
+                        st.plotly_chart(fig, use_container_width=True)
+                    
+                    with col2:
+                        if "phishing_type" in df.columns:
+                            df["phishing_type"] = df["phishing_type"].fillna("legitimate")
+                            
+                            type_counts = df["phishing_type"].value_counts().reset_index()
+                            type_counts.columns = ["Phishing Type", "Count"]
+                            
+                            fig = px.bar(
+                                type_counts,
+                                x="Phishing Type",
+                                y="Count",
+                                title="Distribution of Phishing Types",
+                                color="Count"
+                            )
+                            st.plotly_chart(fig, use_container_width=True)
+                
+                if "confidence" in df.columns:
+                    phishing_df = df[df["is_phishing"] == True]
+                    if not phishing_df.empty:
+                        fig = px.histogram(
+                            phishing_df,
+                            x="confidence",
+                            nbins=20,
+                            title="Phishing Detection Confidence Distribution",
+                            color_discrete_sequence=px.colors.qualitative.Pastel
+                        )
+                        st.plotly_chart(fig, use_container_width=True)
+                
+                if "timestamp" in df.columns:
+                    df["timestamp"] = pd.to_datetime(df["timestamp"], errors='coerce')
+                    df["date"] = df["timestamp"].dt.date
+                    
+                    daily_counts = df.groupby(["date", "is_phishing"]).size().reset_index(name="count")
+                    
+                    fig = px.line(
+                        daily_counts,
+                        x="date",
+                        y="count",
+                        color="is_phishing",
+                        title="Phishing Attempts Over Time",
+                        labels={"is_phishing": "Is Phishing", "count": "Number of Emails", "date": "Date"}
+                    )
+                    st.plotly_chart(fig, use_container_width=True)
+            else:
+                st.info("No phishing log data available yet. Use the Phishing Attack tab to generate logs.")
+        except Exception as e:
+            st.error(f"Error analyzing phishing logs: {str(e)}")
+            st.info("Phishing log file may not exist yet. Use the Phishing Attack tab to generate logs.")
     else:
         st.info("👆 Please select an analysis type from the dropdown above to view attack logs.")
+
+with phishing_tab:
+    st.title("Phishing Attack Simulation")
+    st.write("This tab simulates and detects phishing attacks in emails.")
+    
+    phishing_sim_tab, url_analysis_tab, training_tab = st.tabs(["Email Simulation", "URL Analysis", "Training"])
+    
+    with phishing_sim_tab:
+        st.subheader("Email Phishing Detection")
+        
+        sample_emails = get_sample_emails()
+        
+        col1, col2 = st.columns([3, 2])
+        
+        with col1:
+            st.write("### Email Content")
+            
+            email_source = st.radio(
+                "Email Source",
+                ["Sample Phishing Email", "Sample Legitimate Email", "Custom Email"],
+                horizontal=True
+            )
+            
+            email_data = {}
+            
+            if email_source == "Sample Phishing Email":
+                sample_idx = st.selectbox(
+                    "Select a sample phishing email",
+                    range(len(sample_emails["phishing"])),
+                    format_func=lambda i: f"{sample_emails['phishing'][i]['subject']}"
+                )
+                email_data = sample_emails["phishing"][sample_idx]
+                st.info("This is a known phishing email sample for demonstration purposes.")
+            
+            elif email_source == "Sample Legitimate Email":
+                sample_idx = st.selectbox(
+                    "Select a sample legitimate email",
+                    range(len(sample_emails["legitimate"])),
+                    format_func=lambda i: f"{sample_emails['legitimate'][i]['subject']}"
+                )
+                email_data = sample_emails["legitimate"][sample_idx]
+                st.info("This is a known legitimate email sample for demonstration purposes.")
+            
+            elif email_source == "Custom Email":
+                with st.form("custom_email_form"):
+                    from_address = st.text_input("From Email Address:")
+                    subject = st.text_input("Email Subject:")
+                    body = st.text_area("Email Body:", height=250)
+                    
+                    submit_button = st.form_submit_button("Analyze Email")
+                    
+                    if submit_button:
+                        if not from_address or not subject or not body:
+                            st.warning("Please fill in all fields.")
+                        else:
+                            email_data = {
+                                "from": from_address,
+                                "subject": subject,
+                                "body": body
+                            }
+            
+            if email_data:
+                st.write("**From:** ", email_data.get("from", ""))
+                st.write("**Subject:** ", email_data.get("subject", ""))
+                st.write("**Body:**")
+                st.text_area("Email Content", email_data.get("body", ""), height=250, disabled=True)
+        
+        with col2:
+            st.write("### Detection Results")
+            
+            if email_data:
+                if st.button("Analyze for Phishing"):
+                    detection_result = detect_phishing(email_data)
+                    
+                    urls = extract_urls_from_email(email_data)
+                    
+                    log_phishing_attempt(email_data, detection_result)
+                    
+                    st.session_state.phishing_result = {
+                        "email": email_data,
+                        "detection": detection_result,
+                        "urls": urls
+                    }
+                
+                if "phishing_result" in st.session_state and st.session_state.phishing_result:
+                    result = st.session_state.phishing_result
+                    detection = result["detection"]
+                    
+                    if detection["is_phishing"]:
+                        st.error(f"⚠️ Phishing Detected! Confidence: {detection['confidence']:.2f}")
+                        if detection.get("type"):
+                            st.warning(f"**Type:** {detection['type'].replace('_', ' ').title()}")
+                    else:
+                        st.success("✅ No Phishing Detected")
+                    
+                    if "indicators" in detection and detection["indicators"]:
+                        st.write("**Risk Indicators:**")
+                        for indicator in detection["indicators"]:
+                            icon = "🔴" if indicator["severity"] == "critical" else "🟠" if indicator["severity"] == "high" else "🟡"
+                            st.write(f"{icon} **{indicator['type'].replace('_', ' ').title()}**: {indicator['description']}")
+                    
+                    if result["urls"]:
+                        st.write("**URLs in Email:**")
+                        for url in result["urls"]:
+                            url_analysis = analyze_url(url)
+                            if url_analysis["is_suspicious"]:
+                                st.warning(f"⚠️ {url} (Risk Score: {url_analysis['risk_score']:.2f})")
+                            else:
+                                st.info(f"✓ {url} (Risk Score: {url_analysis['risk_score']:.2f})")
+    
+    with url_analysis_tab:
+        st.subheader("URL Analysis")
+        st.write("Analyze URLs for phishing indicators")
+        
+        url_to_analyze = st.text_input("Enter URL to analyze:")
+        
+        if st.button("Analyze URL") and url_to_analyze:
+            url_result = analyze_url(url_to_analyze)
+            
+            st.session_state.url_analysis = url_result
+        
+        if "url_analysis" in st.session_state and st.session_state.url_analysis:
+            result = st.session_state.url_analysis
+            
+            if result["is_suspicious"]:
+                st.error(f"⚠️ Suspicious URL detected! Risk Score: {result['risk_score']:.2f}")
+            else:
+                st.success(f"✅ URL appears safe. Risk Score: {result['risk_score']:.2f}")
+            
+            st.write(f"**Domain:** {result['domain']}")
+            
+            if result["indicators"]:
+                st.write("**Risk Indicators:**")
+                for indicator in result["indicators"]:
+                    icon = "🔴" if indicator["severity"] == "critical" else "🟠" if indicator["severity"] == "high" else "🟡" if indicator["severity"] == "medium" else "🔵"
+                    st.write(f"{icon} **{indicator['type'].replace('_', ' ').title()}**: {indicator['description']}")
+            
+            st.write("### URL Analysis Explanation")
+            st.info("""
+            **How URLs are analyzed:**
+            - Domain analysis (suspicious TLDs, IP-based URLs, typosquatting)
+            - Path and query parameter inspection
+            - URL shortener detection
+            - Look-alike domain detection
+            - Malicious pattern recognition
+            """)
+    
+    with training_tab:
+        st.subheader("Training & Awareness")
+        st.write("Learn how to identify and protect against phishing attacks")
+        
+        st.write("### Common Phishing Indicators")
+        
+        indicators = [
+            {
+                "name": "Suspicious Sender",
+                "description": "The email comes from a domain that doesn't match the organization it claims to be from",
+                "example": "apple-support@secure-verify.com instead of support@apple.com"
+            },
+            {
+                "name": "Urgency",
+                "description": "The email creates a false sense of urgency to pressure you into acting quickly",
+                "example": "URGENT: Your account will be closed in 24 hours if you don't verify..."
+            },
+            {
+                "name": "Poor Grammar/Spelling",
+                "description": "Legitimate organizations rarely send emails with obvious grammar mistakes",
+                "example": "Dear customer, we need your verification urgent."
+            },
+            {
+                "name": "Suspicious Links",
+                "description": "Links that don't go where they claim to go, or use URL shorteners",
+                "example": "paypal.com-secure.verify-now.net"
+            },
+            {
+                "name": "Personal Information Requests",
+                "description": "Legitimate organizations rarely ask for sensitive information via email",
+                "example": "Please reply with your Social Security Number and credit card details..."
+            }
+        ]
+        
+        for idx, indicator in enumerate(indicators):
+            with st.expander(f"{idx+1}. {indicator['name']}", expanded=idx==0):
+                st.write(f"**Description:** {indicator['description']}")
+                st.write(f"**Example:** *{indicator['example']}*")
+        
+        st.write("### How to Protect Yourself")
+        
+        protection_tips = [
+            "**Verify the sender's email address**: Check that it comes from an official domain",
+            "**Hover before clicking**: Hover over links to see where they actually go",
+            "**Never provide sensitive information**: Legitimate organizations won't ask for passwords or financial details via email",
+            "**Check for personalization**: Phishing emails often use generic greetings like 'Dear Customer'",
+            "**Be wary of unexpected attachments**: Don't open attachments you weren't expecting",
+            "**Contact the company directly**: Use official contact methods from their website, not from the email"
+        ]
+        
+        for tip in protection_tips:
+            st.markdown(f"- {tip}")
+        
+        st.write("### Phishing Simulation Exercise")
+        
+        if st.button("Start Phishing Quiz"):
+            quiz_emails = [
+                {
+                    "from": "customer.service@paypa1.com",
+                    "subject": "Your PayPal account has been limited!",
+                    "body": "Dear Customer,\n\nWe've noticed unusual activity in your PayPal account. Your account has been limited until you confirm your information. Please click below to verify your identity.\n\n[Confirm Your Information Now](https://paypal-secure-center.com/verify)",
+                    "is_phishing": True,
+                    "explanation": "This is a phishing email. Notice the sender domain 'paypa1.com' uses a number '1' instead of the letter 'l'. The email also creates urgency and the link doesn't go to the official PayPal domain."
+                },
+                {
+                    "from": "no-reply@github.com",
+                    "subject": "Security alert: new sign-in to your GitHub account",
+                    "body": "We noticed a new sign-in to your GitHub account from a new device on July 7, 2023.\n\nLocation: San Francisco, CA\nDevice: Chrome on Mac\n\nIf this was you, you can ignore this message. If not, you can secure your account here: https://github.com/settings/security",
+                    "is_phishing": False,
+                    "explanation": "This is a legitimate security alert from GitHub. It comes from an official GitHub domain, doesn't create excessive urgency, and the link goes directly to github.com."
+                }
+            ]
+            
+            st.session_state.quiz_idx = 0
+            st.session_state.quiz_emails = quiz_emails
+            st.session_state.quiz_score = 0
+            st.session_state.quiz_answered = False
+        
+        if "quiz_emails" in st.session_state and "quiz_idx" in st.session_state:
+            if st.session_state.quiz_idx < len(st.session_state.quiz_emails):
+                quiz_email = st.session_state.quiz_emails[st.session_state.quiz_idx]
+                
+                st.write(f"**Email {st.session_state.quiz_idx + 1}/{len(st.session_state.quiz_emails)}**")
+                st.write(f"**From:** {quiz_email['from']}")
+                st.write(f"**Subject:** {quiz_email['subject']}")
+                st.write(f"**Body:**")
+                st.text_area("Email Body", quiz_email['body'], height=150, disabled=True)
+                
+                if not st.session_state.quiz_answered:
+                    col1, col2 = st.columns(2)
+                    with col1:
+                        if st.button("This is a phishing email"):
+                            st.session_state.user_answer = True
+                            st.session_state.quiz_answered = True
+                    with col2:
+                        if st.button("This is a legitimate email"):
+                            st.session_state.user_answer = False
+                            st.session_state.quiz_answered = True
+                
+                if st.session_state.quiz_answered:
+                    if st.session_state.user_answer == quiz_email["is_phishing"]:
+                        st.success("✅ Correct!")
+                        st.session_state.quiz_score += 1
+                    else:
+                        st.error("❌ Incorrect!")
+                    
+                    st.info(f"**Explanation:** {quiz_email['explanation']}")
+                    
+                    if st.button("Next Email"):
+                        st.session_state.quiz_idx += 1
+                        st.session_state.quiz_answered = False
+                        st.experimental_rerun()
+            else:
+                st.write(f"### Quiz Complete!")
+                st.write(f"Your score: {st.session_state.quiz_score}/{len(st.session_state.quiz_emails)}")
+                
+                if st.session_state.quiz_score == len(st.session_state.quiz_emails):
+                    st.success("Perfect score! You're well-prepared to spot phishing attempts.")
+                elif st.session_state.quiz_score >= len(st.session_state.quiz_emails) * 0.7:
+                    st.success("Good job! You caught most of the phishing attempts.")
+                else:
+                    st.warning("You might need more practice to identify phishing emails reliably.")
+                
+                if st.button("Restart Quiz"):
+                    st.session_state.quiz_idx = 0
+                    st.session_state.quiz_score = 0
+                    st.session_state.quiz_answered = False
+                    st.experimental_rerun()
