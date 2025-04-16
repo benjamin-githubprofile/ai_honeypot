@@ -193,7 +193,7 @@ The system can be configured through the web interface, but you can also modify 
 │   ├── ddos_detector.py    # DDoS detection model
 │   ├── bot_detector.py     # Web scraping detection model
 │   └── api_security/       # API security models
-├── attacks/                # Attack simulation modules
+├── text_attacks/                # Attack simulation modules
 │   ├── text_attack.py      # Adversarial text attack generator
 │   └── credential_attack.py # Credential stuffing simulation
 ├── web_scraping/           # Web scraping detection
