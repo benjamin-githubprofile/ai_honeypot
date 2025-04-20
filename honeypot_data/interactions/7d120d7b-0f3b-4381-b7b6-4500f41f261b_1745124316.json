@@ -1,0 +1,11 @@
+{
+  "trap_id": "7d120d7b-0f3b-4381-b7b6-4500f41f261b",
+  "ip_address": "10.144.15.248",
+  "timestamp": "2025-04-19T21:45:16.920483",
+  "type": "credential_submission",
+  "data": {
+    "user_agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 14_7_1 like Mac OS X) AppleWebKit/605.1.15",
+    "referrer": "https://mail.yahoo.com/",
+    "credential_type": "personal"
+  }
+}

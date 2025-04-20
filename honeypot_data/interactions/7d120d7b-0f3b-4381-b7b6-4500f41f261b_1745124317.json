@@ -1,0 +1,10 @@
+{
+  "trap_id": "7d120d7b-0f3b-4381-b7b6-4500f41f261b",
+  "ip_address": "10.144.15.248",
+  "timestamp": "2025-04-19T21:45:17.658248",
+  "type": "email_view",
+  "data": {
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15",
+    "referrer": ""
+  }
+}

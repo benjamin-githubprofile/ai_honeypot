@@ -1,0 +1,10 @@
+{
+  "trap_id": "b51d44f6-1afd-4f16-8c00-5b0e5765b1bb",
+  "ip_address": "92.247.222.89",
+  "timestamp": "2025-04-19T21:45:16.816694",
+  "type": "link_click",
+  "data": {
+    "user_agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 14_7_1 like Mac OS X) AppleWebKit/605.1.15",
+    "referrer": "https://mail.google.com/"
+  }
+}

@@ -3,6 +3,19 @@ import random
 from urllib.parse import urlparse, parse_qs
 
 def analyze_url(url):
+    if '@' in url and not url.startswith('mailto:') and not url.startswith('http'):
+        return {
+            "url": url,
+            "domain": None,
+            "risk_score": 0.9,  # High risk
+            "is_suspicious": True,
+            "indicators": [{
+                "type": "email_as_url",
+                "description": "This appears to be an email address, not a URL. Could be a phishing attempt.",
+                "severity": "high"
+            }]
+        }
+    
     try:
         parsed_url = urlparse(url)
         domain = parsed_url.netloc.lower()
