@@ -1,8 +1,20 @@
 from transformers import pipeline
 from utils.credential_storage import CredentialStorage
 
-password_analyzer = pipeline("text-classification", model="distilbert-base-uncased")
-credential_storage = CredentialStorage()
+_password_analyzer = None
+_credential_storage = None
+
+def get_password_analyzer():
+    global _password_analyzer
+    if _password_analyzer is None:
+        _password_analyzer = pipeline("text-classification", model="distilbert-base-uncased")
+    return _password_analyzer
+
+def get_credential_storage():
+    global _credential_storage
+    if _credential_storage is None:
+        _credential_storage = CredentialStorage()
+    return _credential_storage
 
 def analyze_login_attempt(username, password):
     analysis = {
@@ -17,6 +29,8 @@ def analyze_login_attempt(username, password):
         analysis["risk_score"] += 0.3
         analysis["common_pattern"] = True
     
+    # Only load the model when needed
+    password_analyzer = get_password_analyzer()
     password_analysis = password_analyzer(password)
     
     if len(password) < 8:
@@ -35,17 +49,7 @@ def analyze_login_attempt(username, password):
     return analysis
 
 def update_credential_model():
-    """Update the machine learning model for credential attack detection.
-    
-    Returns:
-        tuple: (success, message) where success is a boolean and message is a string
-    """
-    return credential_storage.update_model()
+    return get_credential_storage().update_model()
 
 def get_credential_statistics():
-    """Get statistics about credential attacks.
-    
-    Returns:
-        dict: Statistics about credential attacks
-    """
-    return credential_storage.get_statistics()
+    return get_credential_storage().get_statistics()
