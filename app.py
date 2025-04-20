@@ -1,12 +1,7 @@
 import streamlit as st
+import os
 print("🔥 app.py is running")
 st.write("👋 Hello from AI Honeypot!")
-
-# Move these into functions or behind tabs
-# from models.text_classifier import load_classifier
-# from models.style_transfer import load_style_transfer_model
-# classifier = load_classifier()
-# style_model, style_tokenizer = load_style_transfer_model()
 
 # Create global cache for models
 if "models" not in st.session_state:
@@ -26,7 +21,6 @@ def get_style_model():
         st.session_state.models["style_tokenizer"] = tokenizer
     return st.session_state.models["style_model"], st.session_state.models["style_tokenizer"]
 
-# Only put tab setup at the top level
 attack_tab, credential_tab, scraping_tab, ddos_tab, sql_tab, xss_tab, phishing_tab, api_tab, analysis_tab = st.tabs(
     ["Text Attack", "Credential Stuffing", "Web Scraping", "DDoS Attack", "SQL Injection", "XSS Attack", "Phishing Attack", "API Security", "Analysis"]
 )
@@ -2404,3 +2398,25 @@ with phishing_tab:
                     st.session_state.quiz_score = 0
                     st.session_state.quiz_answered = False
                     st.experimental_rerun()
+
+def warm_up_cache():
+    """Pre-load models into cache if needed"""
+    with st.spinner("First-time setup: Loading models..."):
+        # Import here to avoid circular imports
+        from models.text_classifier import load_classifier
+        from models.style_transfer import load_style_transfer_model
+        from text_attack.credential_attack import get_password_analyzer
+        
+        # Trigger loading but don't store results
+        _ = load_classifier()
+        _, _ = load_style_transfer_model()
+        _ = get_password_analyzer()
+        
+    st.success("Models loaded!")
+
+# Only run once if models aren't cached
+if not os.path.exists(os.path.join(os.path.dirname(__file__), ".cache", "models_warmed")):
+    warm_up_cache()
+    # Create flag file to show we've warmed the cache
+    with open(os.path.join(os.path.dirname(__file__), ".cache", "models_warmed"), "w") as f:
+        f.write("1")

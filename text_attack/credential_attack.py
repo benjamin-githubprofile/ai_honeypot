@@ -1,21 +1,39 @@
 from transformers import pipeline
 from utils.credential_storage import CredentialStorage
+import os
+import joblib
 
-# Move global initialization to functions
-_password_analyzer = None
-_credential_storage = None
+# Path to cache serialized models
+_CACHE_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), ".cache")
+os.makedirs(_CACHE_DIR, exist_ok=True)
+
+_PASSWORD_ANALYZER_CACHE = os.path.join(_CACHE_DIR, "password_analyzer.joblib")
+_CREDENTIAL_STORAGE = None
 
 def get_password_analyzer():
-    global _password_analyzer
-    if _password_analyzer is None:
-        _password_analyzer = pipeline("text-classification", model="distilbert-base-uncased")
-    return _password_analyzer
+    global _PASSWORD_ANALYZER_CACHE
+    
+    if os.path.exists(_PASSWORD_ANALYZER_CACHE):
+        try:
+            return joblib.load(_PASSWORD_ANALYZER_CACHE)
+        except:
+            pass
+    
+    analyzer = pipeline(
+        "text-classification", 
+        model="distilbert-base-uncased",
+        local_files_only=False
+    )
+    
+    joblib.dump(analyzer, _PASSWORD_ANALYZER_CACHE)
+    
+    return analyzer
 
 def get_credential_storage():
-    global _credential_storage
-    if _credential_storage is None:
-        _credential_storage = CredentialStorage()
-    return _credential_storage
+    global _CREDENTIAL_STORAGE
+    if _CREDENTIAL_STORAGE is None:
+        _CREDENTIAL_STORAGE = CredentialStorage()
+    return _CREDENTIAL_STORAGE
 
 def analyze_login_attempt(username, password):
     analysis = {
@@ -30,7 +48,6 @@ def analyze_login_attempt(username, password):
         analysis["risk_score"] += 0.3
         analysis["common_pattern"] = True
     
-    # Only load the model when needed
     password_analyzer = get_password_analyzer()
     password_analysis = password_analyzer(password)
     

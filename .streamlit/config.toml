@@ -1,0 +1,11 @@
+[server]
+enableStaticServing = true
+runOnSave = false
+maxUploadSize = 50
+
+[browser]
+serverAddress = "localhost"
+gatherUsageStats = false
+
+[theme]
+base = "light"
