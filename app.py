@@ -1,9 +1,38 @@
 import streamlit as st
 print("🔥 app.py is running")
 st.write("👋 Hello from AI Honeypot!")
-from models.text_classifier import load_classifier
+
+# Move these into functions or behind tabs
+# from models.text_classifier import load_classifier
+# from models.style_transfer import load_style_transfer_model
+# classifier = load_classifier()
+# style_model, style_tokenizer = load_style_transfer_model()
+
+# Create global cache for models
+if "models" not in st.session_state:
+    st.session_state.models = {}
+
+def get_text_classifier():
+    if "text_classifier" not in st.session_state.models:
+        from models.text_classifier import load_classifier
+        st.session_state.models["text_classifier"] = load_classifier()
+    return st.session_state.models["text_classifier"]
+
+def get_style_model():
+    if "style_model" not in st.session_state.models:
+        from models.style_transfer import load_style_transfer_model
+        model, tokenizer = load_style_transfer_model()
+        st.session_state.models["style_model"] = model
+        st.session_state.models["style_tokenizer"] = tokenizer
+    return st.session_state.models["style_model"], st.session_state.models["style_tokenizer"]
+
+# Only put tab setup at the top level
+attack_tab, credential_tab, scraping_tab, ddos_tab, sql_tab, xss_tab, phishing_tab, api_tab, analysis_tab = st.tabs(
+    ["Text Attack", "Credential Stuffing", "Web Scraping", "DDoS Attack", "SQL Injection", "XSS Attack", "Phishing Attack", "API Security", "Analysis"]
+)
+
 from text_attack.text_attack import generate_adversarial
-from models.style_transfer import load_style_transfer_model, apply_style_transfer
+from models.style_transfer import apply_style_transfer
 from utils.logger import log_attack
 import pandas as pd
 import plotly.express as px
@@ -90,9 +119,9 @@ def plotly_chart_with_clicks(fig, use_container_width=True):
         st.plotly_chart(fig, use_container_width=use_container_width)
         return None
 
-classifier = load_classifier()
+classifier = get_text_classifier()
 
-style_model, style_tokenizer = load_style_transfer_model()
+style_model, style_tokenizer = get_style_model()
 
 def format_prediction(prediction):
     if prediction:
@@ -109,10 +138,6 @@ def format_prediction(prediction):
     else:
         return "No prediction available"
 
-attack_tab, credential_tab, scraping_tab, ddos_tab, sql_tab, xss_tab, phishing_tab, api_tab, analysis_tab = st.tabs(
-    ["Text Attack", "Credential Stuffing", "Web Scraping", "DDoS Attack", "SQL Injection", "XSS Attack", "Phishing Attack", "API Security", "Analysis"]
-)
-
 with attack_tab:
     st.title("Attack Simulation")
     st.write("Enter text and simulate an adversarial attack on the decoy text classifier.")
@@ -123,15 +148,20 @@ with attack_tab:
     
     if st.button("Simulate Attack"):
         if input_text:
+            # Only load models when the button is clicked
             if attack_option == "Negative Model" or attack_option == "StyleTransfer(Self-Trained Model(100% Negative))":
+                from models.style_transfer import apply_style_transfer
+                style_model, style_tokenizer = get_style_model()
                 adversarial_text = apply_style_transfer(input_text, model=style_model, tokenizer=style_tokenizer)
             else:
+                from text_attack.text_attack import generate_adversarial
                 adversarial_text = generate_adversarial(input_text, attack_type=attack_option)
             
             st.subheader("Results")
             st.write("**Original Text:**", input_text)
             st.write("**Adversarial Text:**", adversarial_text)
             
+            classifier = get_text_classifier()
             original_prediction = classifier(input_text)
             adversarial_prediction = classifier(adversarial_text)
             

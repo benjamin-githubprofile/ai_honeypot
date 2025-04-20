@@ -1,6 +1,7 @@
 from transformers import pipeline
 from utils.credential_storage import CredentialStorage
 
+# Move global initialization to functions
 _password_analyzer = None
 _credential_storage = None
 
