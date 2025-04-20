@@ -3,9 +3,20 @@ import os
 print("🔥 app.py is running")
 st.write("👋 Hello from AI Honeypot!")
 
+# Add after the st.write("👋 Hello from AI Honeypot!")
+cache_dir = os.path.join(os.path.dirname(__file__), ".cache")
+if not os.path.exists(cache_dir) or len(os.listdir(cache_dir)) < 2:
+    st.warning("⚠️ First run may take a few minutes to download models. Subsequent runs will be much faster.")
+
 # Create global cache for models
 if "models" not in st.session_state:
     st.session_state.models = {}
+
+# Set HuggingFace cache directory
+cache_dir = os.path.join(os.path.dirname(__file__), ".cache", "huggingface")
+os.environ["TRANSFORMERS_CACHE"] = cache_dir
+os.environ["HF_HOME"] = cache_dir
+os.makedirs(cache_dir, exist_ok=True)
 
 def get_text_classifier():
     if "text_classifier" not in st.session_state.models:
@@ -21,11 +32,16 @@ def get_style_model():
         st.session_state.models["style_tokenizer"] = tokenizer
     return st.session_state.models["style_model"], st.session_state.models["style_tokenizer"]
 
+def get_adversarial_generator():
+    if "adversarial_generator" not in st.session_state.models:
+        from text_attack.text_attack import generate_adversarial
+        st.session_state.models["adversarial_generator"] = generate_adversarial
+    return st.session_state.models["adversarial_generator"]
+
 attack_tab, credential_tab, scraping_tab, ddos_tab, sql_tab, xss_tab, phishing_tab, api_tab, analysis_tab = st.tabs(
     ["Text Attack", "Credential Stuffing", "Web Scraping", "DDoS Attack", "SQL Injection", "XSS Attack", "Phishing Attack", "API Security", "Analysis"]
 )
 
-from text_attack.text_attack import generate_adversarial
 from models.style_transfer import apply_style_transfer
 from utils.logger import log_attack
 import pandas as pd
@@ -142,13 +158,12 @@ with attack_tab:
     
     if st.button("Simulate Attack"):
         if input_text:
-            # Only load models when the button is clicked
             if attack_option == "Negative Model" or attack_option == "StyleTransfer(Self-Trained Model(100% Negative))":
                 from models.style_transfer import apply_style_transfer
                 style_model, style_tokenizer = get_style_model()
                 adversarial_text = apply_style_transfer(input_text, model=style_model, tokenizer=style_tokenizer)
             else:
-                from text_attack.text_attack import generate_adversarial
+                generate_adversarial = get_adversarial_generator()
                 adversarial_text = generate_adversarial(input_text, attack_type=attack_option)
             
             st.subheader("Results")

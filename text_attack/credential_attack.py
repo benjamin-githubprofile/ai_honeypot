@@ -10,30 +10,23 @@ os.makedirs(_CACHE_DIR, exist_ok=True)
 _PASSWORD_ANALYZER_CACHE = os.path.join(_CACHE_DIR, "password_analyzer.joblib")
 _CREDENTIAL_STORAGE = None
 
+# Use a function instead
+_password_analyzer = None
+_credential_storage = None
+
 def get_password_analyzer():
-    global _PASSWORD_ANALYZER_CACHE
-    
-    if os.path.exists(_PASSWORD_ANALYZER_CACHE):
-        try:
-            return joblib.load(_PASSWORD_ANALYZER_CACHE)
-        except:
-            pass
-    
-    analyzer = pipeline(
-        "text-classification", 
-        model="distilbert-base-uncased",
-        local_files_only=False
-    )
-    
-    joblib.dump(analyzer, _PASSWORD_ANALYZER_CACHE)
-    
-    return analyzer
+    global _password_analyzer
+    if _password_analyzer is None:
+        from transformers import pipeline
+        _password_analyzer = pipeline("text-classification", model="distilbert-base-uncased")
+    return _password_analyzer
 
 def get_credential_storage():
-    global _CREDENTIAL_STORAGE
-    if _CREDENTIAL_STORAGE is None:
-        _CREDENTIAL_STORAGE = CredentialStorage()
-    return _CREDENTIAL_STORAGE
+    global _credential_storage
+    if _credential_storage is None:
+        from utils.credential_storage import CredentialStorage
+        _credential_storage = CredentialStorage()
+    return _credential_storage
 
 def analyze_login_attempt(username, password):
     analysis = {
