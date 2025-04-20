@@ -271,3 +271,5 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 Benjamin - [GitHub Profile](https://github.com/benjamin-githubprofile)
 
 Project Link: [https://github.com/benjamin-githubprofile/ai_honeypot](https://github.com/benjamin-githubprofile/ai_honeypot)
+
+Streamlit App: [https://ai-honeypot.streamlit.app](https://ai-honeypot.streamlit.app)
